@@ -22,20 +22,24 @@ REQUIRED_ASSETS = {
 }
 
 
+def release_asset_name(name):
+    return name.replace(" ", ".").replace("~", ".")
+
+
 def main():
     request = Request(RELEASE_URL, headers={"User-Agent": "DRTPanel-Render-deploy"})
     with urlopen(request, timeout=30) as response:
         release = json.load(response)
 
     available = {asset["name"]: asset["browser_download_url"] for asset in release["assets"]}
-    missing = REQUIRED_ASSETS - available.keys()
+    missing = {name for name in REQUIRED_ASSETS if release_asset_name(name) not in available}
     if missing:
         raise RuntimeError(f"Faltan archivos en el release v1.0.0: {', '.join(sorted(missing))}")
 
     uploads_dir = os.path.join(os.path.dirname(__file__), "uploads")
     os.makedirs(uploads_dir, exist_ok=True)
     for name in sorted(REQUIRED_ASSETS):
-        request = Request(available[name], headers={"User-Agent": "DRTPanel-Render-deploy"})
+        request = Request(available[release_asset_name(name)], headers={"User-Agent": "DRTPanel-Render-deploy"})
         destination = os.path.join(uploads_dir, name)
         with urlopen(request, timeout=120) as response, open(destination, "wb") as output:
             shutil.copyfileobj(response, output)
