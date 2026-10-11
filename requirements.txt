@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+pyTelegramBotAPI
+pydantic
+python-multipart
+rarfile
+UnityPy

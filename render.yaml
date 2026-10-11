@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: drt-panel
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn server:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /healthz
+    envVars:
+      - key: INITIAL_VIP_KEY
+        sync: false
+      - key: BOT_TOKEN
+        sync: false

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>DRT IOS - PANEL VIP</title>
+<meta name="theme-color" content="#050b14">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="DRT IOS">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/app-icon.svg" type="image/svg+xml">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html, body { width: 100%; height: 100%; overflow-x: hidden; background: #000000; color: #cfe3f5; font-family: system-ui, -apple-system, sans-serif; }
+body { min-height: 100vh; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+#stage-wrapper { position: relative; width: 100%; min-height: 100vh; display: flex; align-items: center; justify-content: center; z-index: 2; }
+.bg-animation { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; overflow: hidden; background: radial-gradient(circle at center, #070e18 0%, #000000 90%); }
+.ff-item { position: absolute; height: auto; pointer-events: none; animation: floatItem 10s infinite ease-in-out; object-fit: contain; background: transparent; border-radius: 14px; }
+.vid-personajes { top: 6%; left: 6%; width: 360px; animation-duration: 9s; filter: drop-shadow(0 0 20px rgba(249, 115, 22, 0.6)); }
+.vid-rgb { top: 6%; right: 6%; left: auto; width: 360px; animation-duration: 11s; animation-delay: -3s; filter: drop-shadow(0 0 22px rgba(14, 165, 233, 0.6)); }
+.vid-neblusa { bottom: 6%; right: 6%; top: auto; left: auto; width: 360px; animation-duration: 12s; animation-delay: -5s; filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.6)); }
+.vid-cuadros { bottom: 6%; left: 6%; top: auto; width: 360px; animation-duration: 10s; animation-delay: -2s; filter: drop-shadow(0 0 24px rgba(34, 197, 94, 0.6)); }
+
+@media (max-width: 1200px) { .vid-personajes, .vid-rgb, .vid-neblusa, .vid-cuadros { width: 280px; } }
+@media (max-width: 850px) {
+  .vid-personajes, .vid-rgb, .vid-neblusa, .vid-cuadros { width: 200px; }
+  .vid-personajes { top: 4%; left: 2%; } .vid-rgb { top: 4%; right: 2%; }
+  .vid-neblusa { bottom: 4%; right: 2%; } .vid-cuadros { bottom: 4%; left: 2%; }
+}
+@media (max-width: 480px) {
+  .vid-personajes, .vid-rgb, .vid-neblusa, .vid-cuadros { width: 145px; border-radius: 10px; }
+  .vid-personajes { top: 75px; left: 8px; } .vid-rgb { top: 75px; right: 8px; }
+  .vid-neblusa { bottom: 15px; right: 8px; } .vid-cuadros { bottom: 15px; left: 8px; }
+}
+@keyframes floatItem {
+  0% { transform: translateY(0px) rotate(0deg) scale(1); }
+  50% { transform: translateY(-12px) rotate(2deg) scale(1.02); }
+  100% { transform: translateY(0px) rotate(0deg) scale(1); }
+}
+@keyframes rgbText {
+  0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; }
+}
+.rgb-text { background: linear-gradient(90deg, #ff0055, #7000ff, #00d4ff, #00ff66, #ff0055); background-size: 300% 300%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: rgbText 4s ease infinite; }
+.rgb-text-sub { background: linear-gradient(90deg, #00f2fe, #4facfe, #0000ff, #00f2fe); background-size: 300% 300%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: rgbText 5s ease infinite; }
+.rgb-text-foot { background: linear-gradient(90deg, #ff8a00, #e52e71, #9b51e0, #ff8a00); background-size: 300% 300%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: rgbText 6s ease infinite; }
+
+#login { display: grid; place-items: center; width: 100%; min-height: 100vh; padding: 18px; position: relative; z-index: 2; }
+.lg { position: relative; padding: 36px 28px; background: rgba(8, 15, 26, 0.88); border-radius: 24px; backdrop-filter: blur(16px); box-shadow: 0 0 40px rgba(0, 0, 0, 0.9), inset 0 0 2px rgba(255, 255, 255, 0.1); border: 1px solid rgba(14, 165, 233, 0.25); width: min(420px, 92vw); text-align: center; overflow: hidden; }
+.lg::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, #ff0055, #7000ff, #00d4ff, #00ff66, #ff0055); background-size: 300% 300%; animation: rgbText 4s ease infinite; }
+.icon-lock { width: 48px; height: 48px; margin: 0 auto 12px; background: rgba(14, 165, 233, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(14, 165, 233, 0.3); box-shadow: 0 0 15px rgba(14, 165, 233, 0.2); }
+.logo { font-size: 2.1rem; font-weight: 900; letter-spacing: .25em; text-transform: uppercase; margin-bottom: 4px; }
+.sub { margin-top: 6px; font-size: .72rem; letter-spacing: .15em; font-weight: 700; text-transform: uppercase; }
+.line { height: 2px; margin: 20px auto; width: 80px; background: linear-gradient(90deg, transparent, #0ea5e9, transparent); }
+.lab { display: block; text-align: left; font-size: .72rem; font-weight: 800; letter-spacing: .15em; color: #7dd3fc; margin-bottom: 6px; text-transform: uppercase; }
+#key { text-transform: uppercase; letter-spacing: .15em; text-align: center; font-weight: 700; font-size: 0.95rem; width: 100%; padding: 15px; border-radius: 14px; border: 1px solid #1e3a5f; background: rgba(0, 0, 0, 0.7); color: #fff; margin-bottom: 12px; transition: all 0.3s ease; }
+#key:focus { outline: none; border-color: #0ea5e9; box-shadow: 0 0 15px rgba(14, 165, 233, 0.4); }
+.btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; margin-top: 12px; padding: 16px 20px; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 16px; background: rgba(10, 20, 32, 0.85); backdrop-filter: blur(10px); font-size: 0.92rem; font-weight: 800; cursor: pointer; transition: all 0.3s ease; }
+.btn:hover { transform: translateY(-2px) scale(1.01); border-color: rgba(14, 165, 233, 0.5); }
+.btn-rgb-text { background: linear-gradient(90deg, #00f2fe, #4facfe, #00ff66, #ff0055, #7000ff); background-size: 300% 300%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: rgbText 4s ease infinite; }
+.foot { margin-top: 22px; font-size: .65rem; letter-spacing: .12em; font-weight: 700; text-transform: uppercase; }
+.err { color: #f87171; min-height: 1.2em; font-size: .85rem; font-weight: 600; margin-bottom: 6px; }
+
+#panel { display: none; min-height: 100vh; width: 100%; position: relative; z-index: 2; align-items: center; justify-content: center; }
+header { position: fixed; top: 0; left: 0; width: 100%; padding: 14px 20px; background: rgba(8, 15, 26, 0.92); border-bottom: 1px solid rgba(14, 165, 233, 0.2); backdrop-filter: blur(12px); z-index: 10; display: flex; justify-content: space-between; align-items: center; }
+header h1 { font-size: 1.2rem; color: #fff; }
+.header-links { display: flex; gap: 8px; align-items: center; }
+.badge-link { display: inline-block; padding: 6px 12px; border-radius: 8px; background: rgba(14, 165, 233, 0.15); border: 1px solid rgba(14, 165, 233, 0.5); color: #38bdf8; font-size: .72rem; font-weight: 800; text-decoration: none; transition: all 0.2s ease; }
+.badge-link:hover { background: rgba(14, 165, 233, 0.35); border-color: #38bdf8; color: #ffffff; box-shadow: 0 0 12px rgba(14, 165, 233, 0.4); }
+.online { margin-left: 8px; font-size: .82rem; color: #9bb4cc; }
+.online:before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #22c55e; margin-right: 5px; }
+.wrap { width: min(420px, 90vw); margin: 0 auto; }
+.box { padding: 28px 22px; border: 1px solid rgba(14, 165, 233, 0.3); border-radius: 28px; background: rgba(8, 15, 26, 0.88); backdrop-filter: blur(20px); }
+.title { font-size: .82rem; font-weight: 800; letter-spacing: .15em; color: #7dd3fc; margin-bottom: 20px; text-align: center; text-transform: uppercase; }
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(10px); z-index: 1000; place-items: center; padding: 18px; }
+.modal-content { width: min(420px, 92vw); background: rgba(8, 15, 26, 0.95); border: 1px solid rgba(14, 165, 233, 0.4); border-radius: 24px; padding: 24px; text-align: center; position: relative; max-height: 85vh; overflow-y: auto; }
+.close-btn { position: absolute; top: 14px; right: 18px; background: none; border: none; color: #7dd3fc; font-size: 1.6rem; cursor: pointer; }
+.close-btn:hover { color: #ff0055; }
+</style>
+</head>
+<body>
+
+<div class="bg-animation">
+  <video src="/uploads/PERSONAJES.MP4?v=2" class="ff-item vid-personajes" autoplay loop muted playsinline></video>
+  <video src="/uploads/RGB.MP4?v=2" class="ff-item vid-rgb" autoplay loop muted playsinline></video>
+  <video src="/uploads/NEBLUSA.MP4?v=2" class="ff-item vid-neblusa" autoplay loop muted playsinline></video>
+  <video src="/uploads/CUADROS.MP4?v=2" class="ff-item vid-cuadros" autoplay loop muted playsinline></video>
+</div>
+
+<div id="stage-wrapper">
+  <!-- FORMULARIO LOGIN -->
+  <div id="login">
+    <div class="lg">
+      <div class="icon-lock">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+      </div>
+      <div class="logo rgb-text">DRT IOS</div>
+      <div class="sub rgb-text-sub">LA MEJOR OPCIÓN PARA COMPRAR ARCHIVOS</div>
+      <div class="line"></div>
+      <label class="lab" for="key">🔑 CLAVE DE ACCESO VIP</label>
+      <input type="password" id="key" placeholder="INGRESA TU KEY AQUÍ" autocomplete="off" onkeydown="if(event.key==='Enter')entrar()">
+      <div class="err" id="err"></div>
+      <button class="btn" onclick="entrar()"><span class="btn-rgb-text">VALIDAR ACCESO VIP</span></button>
+      <div class="foot rgb-text-foot">ACCESO VÍNCULADO A UN SOLO DISPOSITIVO</div>
+    </div>
+  </div>
+
+  <!-- PANEL PRINCIPAL -->
+  <div id="panel">
+    <header>
+      <div>
+        <h1 class="rgb-text" style="display:inline-block;">DRT IOS</h1>
+        <span class="online">Online</span>
+      </div>
+      <div class="header-links">
+        <a href="https://t.me/TT_DRTIOS1" target="_blank" class="badge-link">PERFIL</a>
+        <a href="https://t.me/TT_DRTIOS1" target="_blank" class="badge-link">SOPORTE</a>
+      </div>
+    </header>
+    <div class="wrap">
+      <div class="box">
+        <div class="title rgb-text-sub">ELIGE TU ARCHIVO DRT IOS</div>
+        <button class="btn" onclick="descargar('holograma_pj')"><span>🔥</span><span class="btn-rgb-text">HOLOGRAMA PERSONAJES</span></button>
+        <button class="btn" onclick="abrirSubMenuArmas()"><span>🔫</span><span class="btn-rgb-text">HOLOGRAMA ARMAS EXCLUSIVE</span></button>
+        <button class="btn" onclick="descargar('wallhack')"><span>⚡️</span><span class="btn-rgb-text">WALLHACK VIP</span></button>
+        <button class="btn" onclick="abrirSubMenuAimbots()"><span>🎯</span><span class="btn-rgb-text">AIMBOTS EXCLUSIVE</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Armas -->
+<div class="modal-overlay" id="modalArmas">
+  <div class="modal-content">
+    <button class="close-btn" onclick="cerrarSubMenuArmas()">&times;</button>
+    <div class="title rgb-text" style="margin-top:10px;">SELECCIONA HOLOGRAMA ARMAS</div>
+    <button class="btn" onclick="descargar('armas_cuadros')"><span>🎨</span><span class="btn-rgb-text">CUADROS EXCLUSIVE</span></button>
+    <button class="btn" onclick="descargar('armas_rgb')"><span>🌈</span><span class="btn-rgb-text">RGB EXCLUSIVE</span></button>
+    <button class="btn" onclick="descargar('armas_tocino')"><span>🥓</span><span class="btn-rgb-text">TOCINO EXCLUSIVO</span></button>
+    <button class="btn" onclick="descargar('armas_neblina')"><span>☁️</span><span class="btn-rgb-text">NEBLUSA EXCLUSIVO</span></button>
+
+    <!-- SECCIÓN DE PERSONALIZACIÓN DINÁMICA -->
+    <div style="background: rgba(14, 165, 233, 0.08); border: 1px solid rgba(14, 165, 233, 0.3); border-radius: 16px; padding: 12px; margin: 12px 0;">
+      <button class="btn" style="margin-top:0;" onclick="toggleCustomHolo()">
+        <span>🛠</span><span class="btn-rgb-text">PERSONALIZAR HOLOGRAMA</span>
+      </button>
+
+      <div id="customHoloContainer" style="display:none; margin-top: 12px; text-align: left;">
+        <label class="lab">1. SELECCIONA EL TIPO DE HOLOGRAMA:</label>
+        <select id="customHoloType" onchange="cargarColoresDeDump()" style="width:100%; padding:10px; border-radius:8px; background:#000; color:#fff; border:1px solid #1e3a5f; margin-bottom:10px; font-weight:700;">
+          <option value="cuadros">🎨 CUADROS EXCLUSIVE (Color A y B)</option>
+          <option value="tocino">🥓 CARNE / TOCINO EXCLUSIVE (Colores 1 al 6)</option>
+          <option value="neblusa">☁️ NEBLUSA EXCLUSIVE (Colores 1 al 3)</option>
+        </select>
+
+        <label class="lab">2. SUBE TU ARCHIVO SHADER (shaders...):</label>
+        <input type="file" id="userShaderFile" style="width:100%; margin-bottom:14px; color:#fff; font-size:0.8rem;">
+
+        <!-- CONTENEDOR DE SELECTORES DE COLOR DE LA DUMP -->
+        <div id="dumpColorsContainer" style="margin-bottom: 12px;"></div>
+
+        <button class="btn" style="margin-top:0; background: rgba(0, 242, 254, 0.25);" onclick="procesarShaderPersonalizado()">
+          <span>🚀</span><span>INYECTAR DUMP Y DESCARGAR</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Aimbots -->
+<div class="modal-overlay" id="modalAimbots">
+  <div class="modal-content">
+    <button class="close-btn" onclick="cerrarSubMenuAimbots()">&times;</button>
+    <div class="title rgb-text" style="margin-top:10px;">SELECCIONA TIPO DE AIMBOT</div>
+    <button class="btn" onclick="descargar('aimbot_body')"><span>🛡</span><span class="btn-rgb-text">AIMBOT BODY DISIMULADO</span></button>
+    <button class="btn" onclick="descargar('aimbot_neck')"><span>👔</span><span class="btn-rgb-text">AIMBOT NECK</span></button>
+    <button class="btn" onclick="descargar('aimbot_drag')"><span>🎯</span><span class="btn-rgb-text">AIMBOT AIM DRAG</span></button>
+    <button class="btn" onclick="descargar('aimbot_head')"><span>💀</span><span class="btn-rgb-text">AIMBOT HEAD</span></button>
+  </div>
+</div>
+
+<script>
+let token = "";
+let expirationDate = null;
+
+function getDeviceId() {
+  let devId = localStorage.getItem("drt_device_id");
+  if (!devId) {
+    devId = "DEV-" + Math.random().toString(36).substring(2) + Date.now().toString(36);
+    localStorage.setItem("drt_device_id", devId);
+  }
+  return devId;
+}
+
+function logout(mensaje = "TU SESIÓN O KEY HA EXPIRADO") {
+  token = ""; expirationDate = null;
+  document.getElementById("login").style.display = "grid";
+  document.getElementById("panel").style.display = "none";
+  document.getElementById("err").textContent = mensaje;
+}
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/service-worker.js").catch(err => {
+      console.error("No se pudo preparar la app web:", err);
+    });
+  });
+}
+
+async function entrar() {
+  const keyInput = document.getElementById("key");
+  const errDiv = document.getElementById("err");
+  errDiv.textContent = "";
+  try {
+    const r = await fetch("/api/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ key: keyInput.value, device_id: getDeviceId() })
+    });
+    const data = await r.json();
+    if (!r.ok) { errDiv.textContent = data.detail || "KEY INVÁLIDA"; return; }
+    token = data.token; expirationDate = new Date(data.expires_at);
+    document.getElementById("login").style.display = "none";
+    document.getElementById("panel").style.display = "flex";
+  } catch(e) { errDiv.textContent = "ERROR DE CONEXIÓN CON EL SERVIDOR"; }
+}
+
+function abrirSubMenuArmas() { document.getElementById("modalArmas").style.display = "grid"; }
+function cerrarSubMenuArmas() { document.getElementById("modalArmas").style.display = "none"; }
+function abrirSubMenuAimbots() { document.getElementById("modalAimbots").style.display = "grid"; }
+function cerrarSubMenuAimbots() { document.getElementById("modalAimbots").style.display = "none"; }
+
+async function cargarColoresDeDump() {
+  const holoType = document.getElementById("customHoloType").value;
+  const container = document.getElementById("dumpColorsContainer");
+  container.innerHTML = "<div style='font-size:0.75rem; color:#7dd3fc; text-align:center;'>Cargando colores de la DUMP...</div>";
+
+  try {
+    const res = await fetch(`/api/inspect_holo/${holoType}?token=${token || 'TEST'}&device_id=${getDeviceId()}`);
+    const data = await res.json();
+    container.innerHTML = "";
+
+    if (!data.colors || data.colors.length === 0) {
+      container.innerHTML = "<div style='font-size:0.75rem; color:#f87171;'>No se encontraron colores.</div>";
+      return;
+    }
+
+    data.colors.forEach((col, index) => {
+      const label = document.createElement("label");
+      label.className = "lab";
+      label.textContent = `${col.name.toUpperCase()}:`;
+
+      const input = document.createElement("input");
+      input.type = "color";
+      input.id = col.id;
+      input.name = col.id;
+      input.value = col.value;
+      input.style.width = "100%";
+      input.style.height = "36px";
+      input.style.border = "none";
+      input.style.borderRadius = "8px";
+      input.style.cursor = "pointer";
+      input.style.background = "transparent";
+      input.style.marginBottom = "10px";
+
+      container.appendChild(label);
+      container.appendChild(input);
+    });
+  } catch (err) {
+    container.innerHTML = "<div style='font-size:0.75rem; color:#f87171;'>Error al conectar con la DUMP.</div>";
+  }
+}
+
+function toggleCustomHolo() {
+  const box = document.getElementById("customHoloContainer");
+  box.style.display = box.style.display === "none" ? "block" : "none";
+  if (box.style.display === "block") {
+    cargarColoresDeDump();
+  }
+}
+
+function guardarDescarga(blob, filename) {
+  const bridge = window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.drtFileDownload;
+  if (bridge) {
+    const id = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const chunkSize = 256 * 1024;
+    const count = Math.max(1, Math.ceil(blob.size / chunkSize));
+    let index = 0;
+
+    const sendNextChunk = () => {
+      const reader = new FileReader();
+      reader.onerror = () => alert("No se pudo preparar el archivo para guardarlo.");
+      reader.onload = () => {
+        const result = String(reader.result);
+        bridge.postMessage({
+          id,
+          name: filename,
+          index,
+          count,
+          data: result.slice(result.indexOf(",") + 1)
+        });
+        index += 1;
+        if (index < count) sendNextChunk();
+      };
+
+      const start = index * chunkSize;
+      reader.readAsDataURL(blob.slice(start, Math.min(start + chunkSize, blob.size)));
+    };
+
+    sendNextChunk();
+    return;
+  }
+
+  const blobUrl = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = blobUrl;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
+}
+
+async function descargar(fileKey) {
+  if (!token) { logout(); return; }
+
+  const downloadUrl = new URL(`/api/download/${encodeURIComponent(fileKey)}`, window.location.origin);
+  downloadUrl.searchParams.set("token", token);
+  downloadUrl.searchParams.set("device_id", getDeviceId());
+
+  try {
+    const response = await fetch(downloadUrl);
+    if (!response.ok) {
+      let errorMessage = "No se pudo generar el archivo.";
+      try {
+        const errorData = await response.json();
+        if (errorData.detail) errorMessage = errorData.detail;
+      } catch (error) {}
+      alert(errorMessage);
+      return;
+    }
+
+    const disposition = response.headers.get("Content-Disposition") || "";
+    const filenameMatch = disposition.match(/filename\*=UTF-8''([^;]+)|filename="?([^";]+)"?/i);
+    let filename = `${fileKey}.bin`;
+    if (filenameMatch) {
+      try {
+        filename = decodeURIComponent(filenameMatch[1] || filenameMatch[2]);
+      } catch (error) {
+        filename = filenameMatch[2] || filename;
+      }
+    }
+
+    guardarDescarga(await response.blob(), filename);
+  } catch (error) {
+    alert("No se pudo conectar con el servidor para descargar el archivo.");
+  }
+}
+
+async function procesarShaderPersonalizado() {
+  const fileInput = document.getElementById("userShaderFile");
+  if (!fileInput.files || fileInput.files.length === 0) {
+    alert("Por favor selecciona tu archivo de shaders.");
+    return;
+  }
+
+  const holoType = document.getElementById("customHoloType").value;
+  const file = fileInput.files[0];
+
+  const formData = new FormData();
+  formData.append("token", token || "TEST");
+  formData.append("device_id", getDeviceId());
+  formData.append("holo_type", holoType);
+  formData.append("file", file);
+
+  const colorInputs = document.querySelectorAll("#dumpColorsContainer input[type='color']");
+  if (colorInputs.length === 0) {
+    alert("Espera a que carguen los colores de la DUMP.");
+    return;
+  }
+
+  colorInputs.forEach(input => {
+    formData.append(input.id, input.value);
+  });
+
+  try {
+    const response = await fetch("/api/custom_cuadros_inject", { method: "POST", body: formData });
+    if (!response.ok) {
+      let errorMsg = "Error al procesar e inyectar el shader.";
+      try { const errData = await response.json(); if (errData.detail) errorMsg = errData.detail; } catch (e) {}
+      alert("Error del servidor: " + errorMsg);
+      return;
+    }
+
+    guardarDescarga(await response.blob(), file.name);
+  } catch (err) {
+    alert("Error de conexión con el servidor.");
+  }
+}
+</script>
+</body>
+</html>
